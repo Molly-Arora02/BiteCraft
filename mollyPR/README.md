@@ -1,18 +1,22 @@
-# MollyPR Solution: Authentication & Cookie Fix
+# MollyPR Solution: Authentication & Food Controller Bug Fixes
 
-This directory contains the complete solution addressing the authentication cookie parsing bug and associated session handling improvements in BiteCraft.
+This directory contains the complete solution addressing critical bugs in the BiteCraft backend.
 
-## Bug Summary
-In Express, cookies sent from client browsers (such as `req.cookies?.token`) are not parsed by default unless `cookie-parser` is mounted as middleware. Additionally, standard CORS configurations reject credentialed cross-origin requests. As a result, protected routes returned `401 Unauthorized` even after successful logins.
+## Bugs Resolved
 
-## Changes Included in this Solution:
-1. **`cookie-parser` Middleware**:
-   - Added `cookie-parser` dependency and registered `app.use(cookieParser())` in `backend/src/server.js`.
-2. **Dynamic CORS with Credentials**:
-   - Enabled `credentials: true` and origin validation in `backend/src/server.js` so browsers can securely send and receive cookies across ports.
-3. **Dual-Strategy Token Extraction**:
-   - Updated `backend/src/middleware/auth.js` to seamlessly extract tokens from either `Cookie: token=...` or `Authorization: Bearer <token>`.
-4. **Hardened Cookie Options**:
-   - Enhanced `backend/src/controllers/authController.js` with `httpOnly`, environment-aware `sameSite`, and explicit `maxAge`.
-5. **Session Lifecycle Endpoints**:
-   - Added `POST /api/auth/logout` (cookie invalidation) and `GET /api/auth/me` (session user profile) in `backend/src/routes/authRoutes.js`.
+### 1. Registration Crash & Unhandled Duplicate Email Errors (`authController.js`)
+- **Problem**: Submitting an existing email triggered an unhandled MongoDB duplicate key error (`E11000`) or missing validation errors, crashing the entire Node process and knocking the API offline.
+- **Fix**: Wrapped registration logic in safe `try...catch` handlers, added duplicate user existence checks (`409 Conflict`), and added input validation.
+
+### 2. Cookie Authentication & CORS Failure (`auth.js` & `server.js`)
+- **Problem**: `req.cookies?.token` was always `undefined` because `cookie-parser` wasn't installed or mounted, and CORS rejected credentials.
+- **Fix**: Installed and mounted `cookie-parser`, enabled CORS `credentials: true`, added dual token resolution (Bearer + Cookie), and implemented `/api/auth/logout` and `/api/auth/me`.
+
+### 3. Food Controller Unhandled Promises & Missing CRUD (`foodController.js`)
+- **Problem**: Routes threw unhandled async rejections when database operations encountered errors, and CRUD operations were unimplemented stubs (`501 Not Implemented`).
+- **Fix**: Implemented full CRUD operations (`getFoods`, `getFoodById`, `createFood`, `updateFood`, `deleteFood`) with safe error handling and input validation.
+
+### 4. Missing Scripts in `package.json`
+- **Problem**: The project README instructs users and deployment services to run `npm start`, but `package.json` had no scripts.
+- **Fix**: Added `"start": "node src/server.js"` and `"dev": "node --watch src/server.js"`.
+
