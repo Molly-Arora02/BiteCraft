@@ -1,9 +1,15 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Register from "./pages/Register";
+import Menu from "./pages/Menu";
+
 function App() {
   return (
-    <div>
-      <h1>BiteCraft</h1>
-      <p>Food Menu Management System</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/menu" element={<Menu />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
