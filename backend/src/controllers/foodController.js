@@ -12,7 +12,54 @@ const foodController = {
         res.status(501).json({ message: "Not implemented" });
     },
     updateFood: async (req, res) => {
-        res.status(501).json({ message: "Not implemented" });
+        try {
+            const { name, category, price, description, available, image } = req.body;
+
+            if (
+                name === undefined &&
+                category === undefined &&
+                price === undefined &&
+                description === undefined &&
+                available === undefined &&
+                image === undefined
+            ) {
+                return res.status(400).json({
+                    message: "At least one field is required"
+                });
+            }
+
+            if (
+                (name !== undefined && typeof name !== "string") ||
+                (category !== undefined && typeof category !== "string") ||
+                (price !== undefined && (typeof price !== "number" || price < 0)) ||
+                (available !== undefined && typeof available !== "boolean")
+            ) {
+                return res.status(400).json({
+                    message: "Invalid food details"
+                });
+            }
+
+            const food = await Food.findByIdAndUpdate(
+                req.params.id,
+                req.body,
+                { new: true }
+            );
+
+            if (!food) {
+                return res.status(404).json({
+                    message: "Food item not found"
+                });
+            }
+
+            return res.status(200).json(food);
+
+        } catch (error) {
+            console.error(error);
+
+            return res.status(500).json({
+                message: "Failed to update food"
+            });
+        }
     },
     deleteFood: async (req, res) => {
         res.status(501).json({ message: "Not implemented" });
