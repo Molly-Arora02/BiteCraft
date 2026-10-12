@@ -50,8 +50,8 @@ BiteCraft lets a restaurant (or canteen, cafe, etc.) maintain its food menu digi
 | Role | Name | Roll No. |
 |------|------|----------|
 | Team Lead| *Akshita Saxena* | *0008* |
-| Member | *Siya Bhardwaj* | *(roll no.)* |
-| Member | *Jiya Kaushik* | *(roll no.)* |
+| Member | *Siya Bhardwaj* | *0081* |
+| Member | *Jiya Kaushik* | *0041* |
 | Member | *Molly Arora* | *0052* |
 
 ---
